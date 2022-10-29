@@ -160,6 +160,7 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script")
 	scheduleName := flag.String("scheduleName", "Test Schedule", "# Name of schedule")
+	scheduleID := flag.String("scheduleID", "XXXXXXXXXXXXXXX", "# ID of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", "Europe/Warsaw", "# Timezone of the schedule")
 	scheduleTeam := flag.String("scheduleTeam", "TestTeam", "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", 2022, "# Year of the schedule")
@@ -173,8 +174,9 @@ func main() {
 		deleteSchedule(*scheduleClient, *scheduleID)
 	}
 
-	createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabled)
+	createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
 	restrictionCreator(*scheduleClient, createdSchedule.Name, *scheduleYear)
+
 	if *delete {
 		scheduleID = &createdSchedule.Id
 		deleteSchedule(*scheduleClient, *scheduleID)
