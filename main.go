@@ -16,6 +16,48 @@ var startMinuteWorkWeek uint32 = 0
 var endHourWorkWeek uint32 = 9
 var endMinWorkWeek uint32 = 0
 
+var defaultSchedule = [...]og.Restriction{
+	{
+		StartDay:  "monday",
+		EndDay:    "tuesday",
+		EndHour:   &endHourWorkWeek,
+		EndMin:    &endMinWorkWeek,
+		StartHour: &startHourWorkWeek,
+		StartMin:  &startMinuteWorkWeek,
+	},
+	{
+		StartDay:  "tuesday",
+		EndDay:    "wednesday",
+		EndHour:   &endHourWorkWeek,
+		EndMin:    &endMinWorkWeek,
+		StartHour: &startHourWorkWeek,
+		StartMin:  &startMinuteWorkWeek,
+	},
+	{
+		StartDay:  "wednesday",
+		EndDay:    "thursday",
+		EndHour:   &endHourWorkWeek,
+		EndMin:    &endMinWorkWeek,
+		StartHour: &startHourWorkWeek,
+		StartMin:  &startMinuteWorkWeek,
+	},
+	{
+		StartDay:  "thursday",
+		EndDay:    "friday",
+		EndHour:   &endHourWorkWeek,
+		EndMin:    &endMinWorkWeek,
+		StartHour: &startHourWorkWeek,
+		StartMin:  &startMinuteWorkWeek,
+	},
+	{
+		StartDay:  "friday",
+		EndDay:    "monday",
+		EndHour:   &endHourWorkWeek,
+		EndMin:    &endMinWorkWeek,
+		StartHour: &startHourWorkWeek,
+		StartMin:  &startMinuteWorkWeek,
+	},
+}
 func getFirstMonday(year int, month time.Month) int {
 	t := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
 	firstMonday := ((8-int(t.Weekday()))%7 + 1)
@@ -70,49 +112,8 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleName string, yea
 					},
 				},
 				TimeRestriction: &og.TimeRestriction{
-					Type: og.WeekdayAndTimeOfDay,
-					RestrictionList: []og.Restriction{
-						{
-							StartDay:  "monday",
-							EndDay:    "tuesday",
-							EndHour:   &endHourWorkWeek,
-							EndMin:    &endMinWorkWeek,
-							StartHour: &startHourWorkWeek,
-							StartMin:  &startMinuteWorkWeek,
-						},
-						{
-							StartDay:  "tuesday",
-							EndDay:    "wednesday",
-							EndHour:   &endHourWorkWeek,
-							EndMin:    &endMinWorkWeek,
-							StartHour: &startHourWorkWeek,
-							StartMin:  &startMinuteWorkWeek,
-						},
-						{
-							StartDay:  "wednesday",
-							EndDay:    "thursday",
-							EndHour:   &endHourWorkWeek,
-							EndMin:    &endMinWorkWeek,
-							StartHour: &startHourWorkWeek,
-							StartMin:  &startMinuteWorkWeek,
-						},
-						{
-							StartDay:  "thursday",
-							EndDay:    "friday",
-							EndHour:   &endHourWorkWeek,
-							EndMin:    &endMinWorkWeek,
-							StartHour: &startHourWorkWeek,
-							StartMin:  &startMinuteWorkWeek,
-						},
-						{
-							StartDay:  "friday",
-							EndDay:    "monday",
-							EndHour:   &endHourWorkWeek,
-							EndMin:    &endMinWorkWeek,
-							StartHour: &startHourWorkWeek,
-							StartMin:  &startMinuteWorkWeek,
-						},
-					},
+					Type:            og.WeekdayAndTimeOfDay,
+					RestrictionList: defaultSchedule[:],
 				},
 			},
 			ScheduleIdentifierType:  schedule.Name,
