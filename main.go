@@ -83,7 +83,9 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	})
 
 	if err != nil {
-		fmt.Printf("Error in scheduleCreator create: %d", err)
+		fmt.Printf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
+	} else {
+		fmt.Printf("Schedule %s with id: %s has been created.\n", scheduleResult.Name, scheduleResult.Id)
 	}
 
 	return *scheduleResult
