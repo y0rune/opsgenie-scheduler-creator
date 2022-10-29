@@ -157,6 +157,19 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	}
 }
 
+func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedule.ListRotationsResult {
+	scheduleResult, err := scheduleClient.ListRotations(nil, &schedule.ListRotationsRequest{
+	  ScheduleIdentifierType:  schedule.Id,
+	  ScheduleIdentifierValue: scheduleID,
+	})
+
+	if err != nil {
+		fmt.Printf("Schedule %s can not be get.\n", scheduleID)
+		os.Exit(1)
+	}
+	return scheduleResult
+}
+
 func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script")
 	scheduleName := flag.String("scheduleName", "Test Schedule", "# Name of schedule")
