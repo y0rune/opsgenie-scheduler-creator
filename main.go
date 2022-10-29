@@ -126,14 +126,27 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleName string, yea
 	}
 }
 
-func main() {
+func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
+	_, err := scheduleClient.Delete(nil, &schedule.DeleteRequest{
+		IdentifierType:  schedule.Id,
+		IdentifierValue: scheduleID,
+	})
 
+	if err != nil {
+		fmt.Printf("Schedule %s has been NOT deleted.\n", scheduleID)
+	} else {
+		fmt.Printf("Schedule %s has been deleted.\n", scheduleID)
+	}
+}
+
+func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script")
 	scheduleName := flag.String("scheduleName", "Test Schedule", "# Name of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", "Europe/Warsaw", "# Timezone of the schedule")
 	scheduleTeam := flag.String("scheduleTeam", "TestTeam", "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", 2022, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", true, "# Schedule is enabled")
+	delete := flag.Bool("delete", false, "# Delete schedule ")
 	flag.Parse()
 
 	if (*apiKey == "") || (apiKey == nil) {
@@ -147,8 +160,14 @@ func main() {
 
 	if err != nil {
 		fmt.Printf("Error in scheduleClient create: %d", err)
+	if *delete && *scheduleName == "TestSchedule" && *scheduleID != "XXXXXXXXXXXXXXX" {
+		deleteSchedule(*scheduleClient, *scheduleID)
 	}
 
 	createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabled)
 	restrictionCreator(*scheduleClient, createdSchedule.Name, *scheduleYear)
+	if *delete {
+		scheduleID = &createdSchedule.Id
+		deleteSchedule(*scheduleClient, *scheduleID)
+	}
 }
