@@ -170,7 +170,7 @@ func main() {
 
 	scheduleClient := createApi(*apiKey)
 
-	if *delete && *scheduleName == "TestSchedule" && *scheduleID != "XXXXXXXXXXXXXXX" {
+	if *delete && *scheduleName == "Test Schedule" && *scheduleID != "XXXXXXXXXXXXXXX" {
 		deleteSchedule(*scheduleClient, *scheduleID)
 	}
 
