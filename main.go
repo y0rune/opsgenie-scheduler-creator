@@ -72,11 +72,11 @@ func getNumberOfWeeks(year int, month time.Month) int {
 	return numberOfWeeks
 }
 
-func scheduleCreator(scheduleClient schedule.Client, scheduleName string, scheduleTimezone string, scheduleTeam string, scheduleEnabled bool) schedule.CreateResult {
+func scheduleCreator(scheduleClient schedule.Client, scheduleName string, scheduleTimezone string, scheduleTeam string, scheduleEnabledFlag bool) schedule.CreateResult {
 	scheduleResult, err := scheduleClient.Create(nil, &schedule.CreateRequest{
 		Name:     scheduleName,
 		Timezone: scheduleTimezone,
-		Enabled:  &scheduleEnabled,
+		Enabled:  &scheduleEnabledFlag,
 		OwnerTeam: &og.OwnerTeam{
 			Name: scheduleTeam,
 		},
@@ -131,7 +131,7 @@ func main() {
 	scheduleTimezone := flag.String("scheduleTimezone", "Europe/Warsaw", "# Timezone of the schedule")
 	scheduleTeam := flag.String("scheduleTeam", "TestTeam", "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", 2022, "# Year of the schedule")
-	scheduleEnabled := flag.Bool("scheduleEnabled", true, "# Schedule is enabled")
+	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", true, "# Schedule is enabled")
 	flag.Parse()
 
 	if (*apiKey == "") || (apiKey == nil) {
