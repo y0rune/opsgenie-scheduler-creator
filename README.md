@@ -34,7 +34,7 @@ go get
 ### How to use it in the console?
 
 ```bash
-go run main.go --apiKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --scheduleName "YEAR_2023" --scheduleYear 2023
+go run main.go --apiKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
 ```
 
 ### Output console
