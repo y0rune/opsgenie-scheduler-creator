@@ -136,8 +136,8 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleName string, yea
 					RestrictionList: defaultSchedule[:],
 				},
 			},
-			ScheduleIdentifierType:  schedule.Name,
-			ScheduleIdentifierValue: scheduleName,
+			ScheduleIdentifierType:  schedule.Id,
+			ScheduleIdentifierValue: scheduleID,
 		})
 
 		fmt.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleName)
@@ -175,7 +175,7 @@ func main() {
 	}
 
 	createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-	restrictionCreator(*scheduleClient, createdSchedule.Name, *scheduleYear)
+	restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
 
 	if *delete {
 		scheduleID = &createdSchedule.Id
