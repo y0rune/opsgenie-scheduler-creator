@@ -71,6 +71,7 @@ func createApi(apiKey string) *schedule.Client {
 
 	if err != nil {
 		fmt.Printf("Error in scheduleClient create: %d", err)
+		os.Exit(1)
 	}
 
 	return scheduleClient
@@ -102,6 +103,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 
 	if err != nil {
 		fmt.Printf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
+		os.Exit(1)
 	} else {
 		fmt.Printf("Schedule %s with id: %s has been created.\n", scheduleResult.Name, scheduleResult.Id)
 	}
@@ -163,13 +165,12 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 
 func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedule.ListRotationsResult {
 	scheduleResult, err := scheduleClient.ListRotations(nil, &schedule.ListRotationsRequest{
-	  ScheduleIdentifierType:  schedule.Id,
-	  ScheduleIdentifierValue: scheduleID,
+		ScheduleIdentifierType:  schedule.Id,
+		ScheduleIdentifierValue: scheduleID,
 	})
 
 	if err != nil {
 		fmt.Printf("Schedule %s can not be get.\n", scheduleID)
-		os.Exit(1)
 	}
 	return scheduleResult
 }
