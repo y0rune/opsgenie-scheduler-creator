@@ -17,8 +17,12 @@ go get
 ```
   -apiKey string
         # ApiKey for use in that script
-  -scheduleEnabled
+  -delete
+        # Delete schedule
+  -scheduleEnabledFlag
         # Schedule is enabled (default true)
+  -scheduleID string
+        # ID of schedule (default "XXXXXXXXXXXXXXX")
   -scheduleName string
         # Name of schedule (default "Test Schedule")
   -scheduleTeam string
@@ -34,7 +38,7 @@ go get
 ### How to use it in the console?
 
 ```bash
-go run main.go --apiKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --scheduleName "YEAR_2023" --scheduleYear 2023
+go run main.go --apiKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
 ```
 
 ### Output console
