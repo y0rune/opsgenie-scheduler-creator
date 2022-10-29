@@ -17,8 +17,12 @@ go get
 ```
   -apiKey string
         # ApiKey for use in that script
-  -scheduleEnabled
+  -delete
+        # Delete schedule
+  -scheduleEnabledFlag
         # Schedule is enabled (default true)
+  -scheduleID string
+        # ID of schedule (default "XXXXXXXXXXXXXXX")
   -scheduleName string
         # Name of schedule (default "Test Schedule")
   -scheduleTeam string
