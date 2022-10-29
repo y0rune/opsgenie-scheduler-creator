@@ -58,6 +58,24 @@ var defaultSchedule = [...]og.Restriction{
 		StartMin:  &startMinuteWorkWeek,
 	},
 }
+
+func createApi(apiKey string) *schedule.Client {
+	if apiKey == "" {
+		fmt.Printf("Empty apiKey... Please use -apiKey \n")
+		os.Exit(1)
+	}
+
+	scheduleClient, err := schedule.NewClient(&client.Config{
+		ApiKey: apiKey,
+	})
+
+	if err != nil {
+		fmt.Printf("Error in scheduleClient create: %d", err)
+	}
+
+	return scheduleClient
+}
+
 func getFirstMonday(year int, month time.Month) int {
 	t := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
 	firstMonday := ((8-int(t.Weekday()))%7 + 1)
@@ -149,17 +167,8 @@ func main() {
 	delete := flag.Bool("delete", false, "# Delete schedule ")
 	flag.Parse()
 
-	if (*apiKey == "") || (apiKey == nil) {
-		fmt.Printf("Empty apiKey... Please use -apiKey \n")
-		os.Exit(1)
-	}
+	scheduleClient := createApi(*apiKey)
 
-	scheduleClient, err := schedule.NewClient(&client.Config{
-		ApiKey: *apiKey,
-	})
-
-	if err != nil {
-		fmt.Printf("Error in scheduleClient create: %d", err)
 	if *delete && *scheduleName == "TestSchedule" && *scheduleID != "XXXXXXXXXXXXXXX" {
 		deleteSchedule(*scheduleClient, *scheduleID)
 	}
