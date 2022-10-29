@@ -109,7 +109,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	return *scheduleResult
 }
 
-func restrictionCreator(scheduleClient schedule.Client, scheduleName string, year int) {
+func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
 	numberOfWeeks := getNumberOfWeeks(year, month)
@@ -120,7 +120,7 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleName string, yea
 		nextMonday = nextMonday.AddDate(0, 0, 7)
 		weekName := fmt.Sprintf("w%d-%d.%d-%d.%d", week, monday.Day(), monday.Month(), nextMonday.Day(), nextMonday.Month())
 
-		scheduleClient.CreateRotation(nil, &schedule.CreateRotationRequest{
+		_, err := scheduleClient.CreateRotation(nil, &schedule.CreateRotationRequest{
 			Rotation: &og.Rotation{
 				Name:      weekName,
 				StartDate: &monday,
@@ -140,7 +140,11 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleName string, yea
 			ScheduleIdentifierValue: scheduleID,
 		})
 
-		fmt.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleName)
+		if err != nil {
+			fmt.Printf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
+		} else {
+			fmt.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleID)
+		}
 	}
 }
 
