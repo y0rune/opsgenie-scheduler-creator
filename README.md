@@ -111,3 +111,18 @@ Rotation w52-25.12-1.1 has been created for schedule YEAR_2023.
 ### Schedule settings in OpsGenie
 ![alt text](https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/screenshots/OpsGenieSchedule.png)
 ![alt text](https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/screenshots/OpsGenieUpdateRotation.png)
+## Test
+
+### Run all tests
+
+```bash
+export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
+go test -v
+```
+
+Alternative:
+
+```bash
+go test --apiKey XXXXXXXXXXXXXXXXXXXXXX -v
+```
+
