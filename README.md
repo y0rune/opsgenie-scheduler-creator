@@ -6,10 +6,12 @@ with rotation in OpsGenie. The rotation settings are:
 - Weekend (from Friday to Monday): all weekend - 17:00 - 9:00  (5:00PM - 9:00AM)
 
 ## Instalation
+## Instalation from source
 
 ```bash
 git clone https://github.com/y0rune/opsgenie-scheduler-creator.git
 go get
+make build
 ```
 
 ## Arguments
@@ -109,8 +111,10 @@ Rotation w52-25.12-1.1 has been created for schedule YEAR_2023.
 ```
 
 ### Schedule settings in OpsGenie
+
 ![alt text](https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/screenshots/OpsGenieSchedule.png)
 ![alt text](https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/screenshots/OpsGenieUpdateRotation.png)
+
 ## Test
 
 ### Run all tests
@@ -125,4 +129,3 @@ Alternative:
 ```bash
 go test --apiKey XXXXXXXXXXXXXXXXXXXXXX -v
 ```
-
