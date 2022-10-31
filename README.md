@@ -8,7 +8,36 @@ with rotation in OpsGenie. The rotation settings are:
 
 ## Instalation from release
 
+- `MacOS`
+
 ```bash
+wget https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/release/opsgenie-scheduler-creator-darwin-amd64 -O opsgenie-scheduler-creator
+chmod +x opsgenie-scheduler-creator
+./opsgenie-scheduler-creator
+```
+
+- `amd64`
+
+```bash
+wget https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/release/opsgenie-scheduler-creator-darwin-amd64 -O opsgenie-scheduler-creator
+chmod +x opsgenie-scheduler-creator
+./opsgenie-scheduler-creator
+```
+
+- `arm64`
+
+```bash
+wget https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/release/opsgenie-scheduler-creator-darwin-arm -O opsgenie-scheduler-creator
+chmod +x opsgenie-scheduler-creator
+./opsgenie-scheduler-creator
+```
+
+- `arm`
+
+```bash
+wget https://github.com/y0rune/opsgenie-scheduler-creator/blob/main/release/opsgenie-scheduler-creator-darwin-amd64 -O opsgenie-scheduler-creator
+chmod +x opsgenie-scheduler-creator
+./opsgenie-scheduler-creator
 ```
 
 ## Instalation from source

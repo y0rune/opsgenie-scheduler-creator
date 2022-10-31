@@ -92,7 +92,7 @@ func TestBuildCommand(t *testing.T) {
 
 func TestCreateScheduleCommand(t *testing.T) {
 	cmd := exec.Command(
-		"./opsgenie-scheduler-rotation",
+		"./opsgenie-scheduler-creator",
 		"--apiKey", *apiKey,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,

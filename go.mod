@@ -1,4 +1,4 @@
-module opsgenie-scheduler-rotation
+module opsgenie-scheduler-creator
 
 go 1.19
 
