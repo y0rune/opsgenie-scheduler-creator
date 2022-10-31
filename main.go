@@ -162,6 +162,8 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 }
 
 func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
+	time.Sleep(10 * time.Second)
+
 	_, err := scheduleClient.Delete(nil, &schedule.DeleteRequest{
 		IdentifierType:  schedule.Id,
 		IdentifierValue: scheduleID,
@@ -199,15 +201,18 @@ func main() {
 
 	scheduleClient := createApi(*apiKey)
 
-	if *delete && *scheduleName == "Test Schedule" && *scheduleID != "XXXXXXXXXXXXXXX" {
-		deleteSchedule(*scheduleClient, *scheduleID)
+	if *scheduleName != staticScheduleName {
+		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
+		if *delete {
+			scheduleID = &createdSchedule.Id
+			deleteSchedule(*scheduleClient, *scheduleID)
+			os.Exit(0)
+		}
 	}
 
-	createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-	restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
-
-	if *delete {
-		scheduleID = &createdSchedule.Id
+	if *delete && *scheduleID != staticScheduleID {
 		deleteSchedule(*scheduleClient, *scheduleID)
+		os.Exit(0)
 	}
 }
