@@ -16,6 +16,13 @@ var startMinuteWorkWeek uint32 = 0
 var endHourWorkWeek uint32 = 9
 var endMinWorkWeek uint32 = 0
 
+const staticScheduleName string = "Test Schedule"
+const staticScheduleID string = "XXXXXXXXXXXXXXX"
+const staticScheduleTimezone string = "Europe/Warsaw"
+const staticScheduleTeam string = "TestTeam"
+const staticScheduleYear int = 2022
+const staticScheduleEnabledFlag bool = true
+
 var defaultSchedule = [...]og.Restriction{
 	{
 		StartDay:  "monday",
@@ -177,12 +184,12 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 
 func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script")
-	scheduleName := flag.String("scheduleName", "Test Schedule", "# Name of schedule")
-	scheduleID := flag.String("scheduleID", "XXXXXXXXXXXXXXX", "# ID of schedule")
-	scheduleTimezone := flag.String("scheduleTimezone", "Europe/Warsaw", "# Timezone of the schedule")
-	scheduleTeam := flag.String("scheduleTeam", "TestTeam", "# Name of the team in the schedule")
-	scheduleYear := flag.Int("scheduleYear", 2022, "# Year of the schedule")
-	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", true, "# Schedule is enabled")
+	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
+	scheduleID := flag.String("scheduleID", staticScheduleID, "# ID of schedule")
+	scheduleTimezone := flag.String("scheduleTimezone", staticScheduleTimezone, "# Timezone of the schedule")
+	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
+	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
+	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
 	delete := flag.Bool("delete", false, "# Delete schedule ")
 	flag.Parse()
 
