@@ -2,10 +2,15 @@
 
 The script `Opsgenie-scheduler-creator` is a automatically creator a schedule
 with rotation in OpsGenie. The rotation settings are:
-- Workweek (from Monday to Friday): daily - 17:00 - 9:00  (5:00PM - 9:00AM)
-- Weekend (from Friday to Monday): all weekend - 17:00 - 9:00  (5:00PM - 9:00AM)
 
-## Instalation
+- Workweek (from Monday to Friday): daily - 17:00 - 9:00 (5:00PM - 9:00AM)
+- Weekend (from Friday to Monday): all weekend - 17:00 - 9:00 (5:00PM - 9:00AM)
+
+## Instalation from release
+
+```bash
+```
+
 ## Instalation from source
 
 ```bash
