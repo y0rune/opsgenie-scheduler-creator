@@ -16,7 +16,8 @@ go get
 
 ```
   -apiKey string
-        # ApiKey for use in that script
+        # ApiKey for use in that script.
+        # You can use the     export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
   -delete
         # Delete schedule
   -scheduleEnabledFlag
@@ -38,7 +39,14 @@ go get
 ### How to use it in the console?
 
 ```bash
-go run main.go --apiKey XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
+export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
+go run main.go --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
+```
+
+Alternative use:
+
+```bash
+go run main.go --apiKey XXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
 ```
 
 ### Output console

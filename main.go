@@ -67,8 +67,12 @@ var defaultSchedule = [...]og.Restriction{
 }
 
 func createApi(apiKey string) *schedule.Client {
-	if apiKey == "" {
-		fmt.Printf("Empty apiKey... Please use -apiKey \n")
+	apiKeyEnv := os.Getenv("OPSGENIE_API_KEY")
+
+	if apiKeyEnv != "" {
+		apiKey = apiKeyEnv
+	} else if apiKey == "" {
+		fmt.Printf("Empty apiKey...\nPlease use -apiKey or    export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\" \n")
 		os.Exit(1)
 	}
 
@@ -183,7 +187,7 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 }
 
 func main() {
-	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script")
+	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script.\n# You can use the     export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\"")
 	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
 	scheduleID := flag.String("scheduleID", staticScheduleID, "# ID of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", staticScheduleTimezone, "# Timezone of the schedule")
