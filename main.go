@@ -9,6 +9,7 @@ import (
 	"github.com/opsgenie/opsgenie-go-sdk-v2/client"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/og"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/schedule"
+	"github.com/sirupsen/logrus"
 )
 
 var startHourWorkWeek uint32 = 17
@@ -78,6 +79,7 @@ func createApi(apiKey string) *schedule.Client {
 
 	scheduleClient, err := schedule.NewClient(&client.Config{
 		ApiKey: apiKey,
+		LogLevel: logrus.ErrorLevel,
 	})
 
 	if err != nil {
