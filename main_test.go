@@ -168,6 +168,7 @@ func TestTwoDeleteTeam(t *testing.T) {
 		"main.go",
 		"--apiKey", *apiKey,
 		"--teamID", teamID,
+		"--delete",
 	)
 
 	err := cmd.Run()
