@@ -260,17 +260,37 @@ func main() {
 	scheduleClient := createApi(*apiKey)
 
 	if *scheduleName != staticScheduleName {
-		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
-		if *delete {
-			scheduleID = &createdSchedule.Id
-			deleteSchedule(*scheduleClient, *scheduleID)
-			os.Exit(0)
-		}
+	var createdTeam *team.CreateTeamResult
+	var createdSchedule *schedule.CreateResult
+
+	if *teamName != staticTeamName && *teamID == staticTeamID {
+		createdTeam = teamCreator(*teamClient, *teamName, *teamDesc)
+		teamID = &createdTeam.Id
 	}
 
-	if *delete && *scheduleID != staticScheduleID {
-		deleteSchedule(*scheduleClient, *scheduleID)
-		os.Exit(0)
+	if *scheduleName != staticScheduleName && *scheduleID == staticScheduleID {
+		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
+		scheduleID = &createdSchedule.Id
+	}
+
+	if *delete {
+		if *scheduleID != staticScheduleID {
+			deleteSchedule(*scheduleClient, *scheduleID)
+		}
+
+		if *teamID != staticTeamID {
+			deleteTeam(*teamClient, *teamID)
+		}
+
+		if createdTeam != nil && createdSchedule != nil {
+			teamDeleteID := &createdTeam.Id
+			scheduleDeleteID := &createdSchedule.Id
+
+			deleteSchedule(*scheduleClient, *scheduleDeleteID)
+			deleteTeam(*teamClient, *teamDeleteID)
+			os.Exit(0)
+		}
+
 	}
 }
