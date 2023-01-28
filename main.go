@@ -71,7 +71,7 @@ var defaultSchedule = [...]og.Restriction{
 	},
 }
 
-func createApi(apiKey string) *schedule.Client {
+func checkApiKey(apiKey string) string {
 	apiKeyEnv := os.Getenv("OPSGENIE_API_KEY")
 
 	if apiKeyEnv != "" {
@@ -80,9 +80,14 @@ func createApi(apiKey string) *schedule.Client {
 		fmt.Printf("Empty apiKey...\nPlease use -apiKey or    export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\" \n")
 		os.Exit(1)
 	}
+	return apiKey
+}
+
+func createApi(apiKey string) *schedule.Client {
+	apiKey = checkApiKey(apiKey)
 
 	scheduleClient, err := schedule.NewClient(&client.Config{
-		ApiKey: apiKey,
+		ApiKey:   apiKey,
 		LogLevel: logrus.ErrorLevel,
 	})
 
