@@ -9,6 +9,7 @@ import (
 	"github.com/opsgenie/opsgenie-go-sdk-v2/client"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/og"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/schedule"
+	"github.com/opsgenie/opsgenie-go-sdk-v2/team"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,6 +25,9 @@ const staticScheduleTeam string = "TestTeam"
 const staticScheduleYear int = 2022
 const staticScheduleEnabledFlag bool = true
 
+const staticTeamID string = "XXXXXXXXXXXXXXX"
+const staticTeamName string = "Team Test"
+const staticTeamDesc string = "None"
 var defaultSchedule = [...]og.Restriction{
 	{
 		StartDay:  "monday",
@@ -190,6 +194,47 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 	return scheduleResult
 }
 
+func createTeamClient(apiKey string) *team.Client {
+	apiKey = checkApiKey(apiKey)
+
+	teamClient, err := team.NewClient(&client.Config{ApiKey: apiKey})
+
+	if err != nil {
+		fmt.Printf("TeamClient can NOT be created.\n")
+	}
+
+	return teamClient
+}
+
+func teamCreator(teamClient team.Client, teamName string, teamDesc string) *team.CreateTeamResult {
+	teamResult, err := teamClient.Create(nil, &team.CreateTeamRequest{
+		Name:        teamName,
+		Description: teamDesc,
+		Members:     []team.Member{},
+	})
+
+	if err != nil {
+		fmt.Printf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
+	} else {
+		fmt.Printf("Team %s with id: %s has been created.\n", teamResult.Name, teamResult.Id)
+	}
+
+	return teamResult
+}
+
+func deleteTeam(teamClient team.Client, teamID string) {
+	_, err := teamClient.Delete(nil, &team.DeleteTeamRequest{
+		IdentifierType:  team.Id,
+		IdentifierValue: teamID,
+	})
+
+	if err != nil {
+		fmt.Printf("Team %s can NOT be deleted.\n", teamID)
+	} else {
+		fmt.Printf("Team %s has been deleted.\n", teamID)
+	}
+}
+
 func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script.\n# You can use the     export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\"")
 	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
@@ -199,6 +244,12 @@ func main() {
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
 	delete := flag.Bool("delete", false, "# Delete schedule ")
+
+	// Team Values
+	teamName := flag.String("teamName", staticTeamName, "# Name of team")
+	teamID := flag.String("teamID", staticTeamID, "# ID of team")
+	teamDesc := flag.String("teamDesc", staticTeamDesc, "# Description of team")
+
 	flag.Parse()
 
 	scheduleClient := createApi(*apiKey)
