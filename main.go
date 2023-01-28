@@ -174,8 +174,6 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 }
 
 func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
-	time.Sleep(10 * time.Second)
-
 	_, err := scheduleClient.Delete(nil, &schedule.DeleteRequest{
 		IdentifierType:  schedule.Id,
 		IdentifierValue: scheduleID,
@@ -186,6 +184,8 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	} else {
 		fmt.Printf("Schedule %s has been deleted.\n", scheduleID)
 	}
+
+	time.Sleep(10 * time.Second)
 }
 
 func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedule.ListRotationsResult {
@@ -239,6 +239,8 @@ func deleteTeam(teamClient team.Client, teamID string) {
 	} else {
 		fmt.Printf("Team %s has been deleted.\n", teamID)
 	}
+
+	time.Sleep(10 * time.Second)
 }
 
 func main() {
