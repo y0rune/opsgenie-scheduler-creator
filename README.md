@@ -55,7 +55,7 @@ make build
         # ApiKey for use in that script.
         # You can use the     export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
   -delete
-        # Delete schedule
+        # Delete schedule or team
   -scheduleEnabledFlag
         # Schedule is enabled (default true)
   -scheduleID string
@@ -68,11 +68,19 @@ make build
         # Timezone of the schedule (default "Europe/Warsaw")
   -scheduleYear int
         # Year of the schedule (default 2022)
+  -teamDesc string
+        # Description of team (default "None")
+  -teamID string
+        # ID of team (default "XXXXXXXXXXXXXXX")
+  -teamName string
+        # Name of team (default "Team Test")
 ```
 
 ## Example of usage
 
 ### How to use it in the console?
+
+- If you have already created the team named `TestTeam`:
 
 ```bash
 export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
@@ -83,6 +91,19 @@ Alternative use:
 
 ```bash
 go run main.go --apiKey XXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
+```
+
+- If you have NOT created the team named `TestTeam`:
+
+```bash
+export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
+go run main.go --teamName TestTeam --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
+```
+
+Alternative use:
+
+```bash
+go run main.go --teamName TestName --apiKey XXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
 ```
 
 ### Output console
@@ -155,11 +176,11 @@ Rotation w52-25.12-1.1 has been created for schedule YEAR_2023.
 
 ```bash
 export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
-go test -v
+go test -v -test.timeout=0
 ```
 
 Alternative:
 
 ```bash
-go test --apiKey XXXXXXXXXXXXXXXXXXXXXX -v
+go test --apiKey XXXXXXXXXXXXXXXXXXXXXX -v -test.timeout=0
 ```
