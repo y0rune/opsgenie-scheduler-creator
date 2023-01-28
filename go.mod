@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.1 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 )
