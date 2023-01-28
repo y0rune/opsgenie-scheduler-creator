@@ -57,7 +57,6 @@ func TestCreateApiClient(t *testing.T) {
 }
 
 func TestCreateTeamClient(t *testing.T) {
-	flag.Parse()
 	teamClient = createTeamClient(*apiKey)
 }
 
@@ -185,9 +184,11 @@ func TestTwoDeleteTeam(t *testing.T) {
 // - Delete a testTeam via builded app
 
 func TestThreeCreateTestTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamName", teamName,
 	)
 
@@ -203,9 +204,10 @@ func TestThreeCreateTestTeam(t *testing.T) {
 }
 
 func TestThreeCreateSchedule(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
 		"--scheduleYear", fmt.Sprint(scheduleYear),
@@ -223,9 +225,10 @@ func TestThreeCreateSchedule(t *testing.T) {
 }
 
 func TestThreeDeleteSchedule(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--scheduleID", scheduleID,
 	)
 
@@ -237,28 +240,12 @@ func TestThreeDeleteSchedule(t *testing.T) {
 }
 
 func TestThreeDeleteTeam(t *testing.T) {
-	cmd := exec.Command(
-		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
-		"--teamID", teamID,
-	)
-
-	err := cmd.Run()
-	if err != nil {
-		t.Fatalf("Command has been failed.\nCommand: %s", err)
-	}
-}
-
-// Test Four:
-// - Create and delete testTeam via go run
-// - Create and delete a testSchedule via go run
-
-func TestFourCreateTestTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
-		"--teamName", teamName,
+		"--apiKey", apiKey,
+		"--teamID", teamID,
 		"--delete",
 	)
 
@@ -270,10 +257,11 @@ func TestFourCreateTestTeam(t *testing.T) {
 }
 
 func TestFourCreateSchedule(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
 		"--scheduleYear", fmt.Sprint(scheduleYear),
@@ -292,9 +280,10 @@ func TestFourCreateSchedule(t *testing.T) {
 // - Create and delete a testSchedule via builded app
 
 func TestFiveCreateTestTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamName", teamName,
 		"--delete",
 	)
@@ -307,9 +296,10 @@ func TestFiveCreateTestTeam(t *testing.T) {
 }
 
 func TestFiveCreateSchedule(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
 		"--scheduleYear", fmt.Sprint(scheduleYear),
@@ -327,10 +317,11 @@ func TestFiveCreateSchedule(t *testing.T) {
 // - Create and delete testTeam and scheduleTest via go run
 
 func TestSixCreateDeleteTestTeamScheduleTest(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamName", teamName,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
@@ -349,9 +340,10 @@ func TestSixCreateDeleteTestTeamScheduleTest(t *testing.T) {
 // - Create and delete testTeam and scheduleTest via builded app
 
 func TestSevenCreateDeleteTestTeamScheduleTest(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"./opsgenie-scheduler-creator",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamName", teamName,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
