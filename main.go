@@ -241,25 +241,32 @@ func deleteTeam(teamClient team.Client, teamID string) {
 }
 
 func main() {
+	// Api Key
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script.\n# You can use the     export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\"")
+
+	// Schedule Values
 	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
 	scheduleID := flag.String("scheduleID", staticScheduleID, "# ID of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", staticScheduleTimezone, "# Timezone of the schedule")
 	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
-	delete := flag.Bool("delete", false, "# Delete schedule ")
 
 	// Team Values
 	teamName := flag.String("teamName", staticTeamName, "# Name of team")
 	teamID := flag.String("teamID", staticTeamID, "# ID of team")
 	teamDesc := flag.String("teamDesc", staticTeamDesc, "# Description of team")
 
+	// Bool
+	delete := flag.Bool("delete", false, "# Delete schedule or team")
+
+	// Parsing a flags
 	flag.Parse()
 
+	// Initialization a Clients
 	scheduleClient := createApi(*apiKey)
+	teamClient := createTeamClient(*apiKey)
 
-	if *scheduleName != staticScheduleName {
 	var createdTeam *team.CreateTeamResult
 	var createdSchedule *schedule.CreateResult
 
