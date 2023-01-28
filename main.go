@@ -28,6 +28,7 @@ const staticScheduleEnabledFlag bool = true
 const staticTeamID string = "XXXXXXXXXXXXXXX"
 const staticTeamName string = "Team Test"
 const staticTeamDesc string = "None"
+
 var defaultSchedule = [...]og.Restriction{
 	{
 		StartDay:  "monday",
@@ -194,7 +195,7 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 	})
 
 	if err != nil {
-		fmt.Printf("Schedule %s can not be get.\n", scheduleID)
+		fmt.Printf("Schedule %s can NOT be get.\n", scheduleID)
 	}
 	return scheduleResult
 }
