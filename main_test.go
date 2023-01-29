@@ -33,21 +33,23 @@ const teamDesc string = "Test"
 func TestCleningApp(t *testing.T) {
 	cmd := exec.Command("make", "clean")
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
 	}
+	fmt.Println(string(output))
 }
 
 func TestBuilingApp(t *testing.T) {
 	cmd := exec.Command("make", "build")
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
 	}
+	fmt.Println(string(output))
 }
 
 // Creating the Clients
@@ -108,42 +110,48 @@ func TestOneDeleteTeam(t *testing.T) {
 // - Delete a testTeam via go run
 
 func TestTwoCreateTestTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamName", teamName,
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 
 	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
-	output, _ := cmd.CombinedOutput()
 	teamID = r.FindString(string(output))
 }
 
 func TestTwoCreateSchedule(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
 		"--scheduleYear", fmt.Sprint(scheduleYear),
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 
 	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
-	output, _ := cmd.CombinedOutput()
 	scheduleID = r.FindString(string(output))
 }
 
@@ -153,28 +161,35 @@ func TestTwoDeleteSchedule(t *testing.T) {
 		"main.go",
 		"--apiKey", *apiKey,
 		"--scheduleID", scheduleID,
+		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
 func TestTwoDeleteTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
 	cmd := exec.Command(
 		"go", "run",
 		"main.go",
-		"--apiKey", *apiKey,
+		"--apiKey", apiKey,
 		"--teamID", teamID,
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -193,14 +208,15 @@ func TestThreeCreateTestTeam(t *testing.T) {
 		"--teamName", teamName,
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 
 	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
-	output, _ := cmd.CombinedOutput()
 	teamID = r.FindString(string(output))
 }
 
@@ -214,14 +230,15 @@ func TestThreeCreateSchedule(t *testing.T) {
 		"--scheduleYear", fmt.Sprint(scheduleYear),
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 
 	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
-	output, _ := cmd.CombinedOutput()
 	scheduleID = r.FindString(string(output))
 }
 
@@ -231,33 +248,23 @@ func TestThreeDeleteSchedule(t *testing.T) {
 		"./opsgenie-scheduler-creator",
 		"--apiKey", apiKey,
 		"--scheduleID", scheduleID,
-	)
-
-	err := cmd.Run()
-	if err != nil {
-		fmt.Println(cmd)
-		t.Fatalf("Command has been failed.\nCommand: %s", err)
-	}
-}
-
-func TestThreeDeleteTeam(t *testing.T) {
-	apiKey := checkApiKey(*apiKey)
-	cmd := exec.Command(
-		"go", "run",
-		"main.go",
-		"--apiKey", apiKey,
-		"--teamID", teamID,
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
-func TestFourCreateSchedule(t *testing.T) {
+// Test Four:
+// - Create and delete testTeam via go run
+// - Create and delete testSchedule via go run
+
+func TestFourCreateDeleteSchedule(t *testing.T) {
 	apiKey := checkApiKey(*apiKey)
 	cmd := exec.Command(
 		"go", "run",
@@ -269,10 +276,30 @@ func TestFourCreateSchedule(t *testing.T) {
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	}
+	fmt.Println(string(output))
+}
+
+func TestFourCreateDeleteTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+	cmd := exec.Command(
+		"go", "run",
+		"main.go",
+		"--apiKey", apiKey,
+		"--teamID", teamID,
+		"--delete",
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(cmd)
+		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -289,10 +316,12 @@ func TestFiveCreateTestTeam(t *testing.T) {
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -304,13 +333,16 @@ func TestFiveCreateSchedule(t *testing.T) {
 		"--scheduleTeam", scheduleTeam,
 		"--scheduleName", scheduleName,
 		"--scheduleYear", fmt.Sprint(scheduleYear),
+		"--teamName", teamName,
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -330,10 +362,12 @@ func TestSixCreateDeleteTestTeamScheduleTest(t *testing.T) {
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -352,10 +386,12 @@ func TestSevenCreateDeleteTestTeamScheduleTest(t *testing.T) {
 		"--delete",
 	)
 
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 
@@ -369,8 +405,8 @@ func TestFailedCreateScheduleCommand(t *testing.T) {
 		"--scheduleYear", fmt.Sprint(scheduleYear),
 	)
 
-	err := cmd.Run()
-	if err != nil {
+	_, err := cmd.CombinedOutput()
+	if err == nil {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
 	}
