@@ -9,6 +9,7 @@ import (
 	"github.com/opsgenie/opsgenie-go-sdk-v2/client"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/og"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/schedule"
+	"github.com/opsgenie/opsgenie-go-sdk-v2/team"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,6 +24,10 @@ const staticScheduleTimezone string = "Europe/Warsaw"
 const staticScheduleTeam string = "TestTeam"
 const staticScheduleYear int = 2022
 const staticScheduleEnabledFlag bool = true
+
+const staticTeamID string = "XXXXXXXXXXXXXXX"
+const staticTeamName string = "Team Test"
+const staticTeamDesc string = "None"
 
 var defaultSchedule = [...]og.Restriction{
 	{
@@ -67,7 +72,7 @@ var defaultSchedule = [...]og.Restriction{
 	},
 }
 
-func createApi(apiKey string) *schedule.Client {
+func checkApiKey(apiKey string) string {
 	apiKeyEnv := os.Getenv("OPSGENIE_API_KEY")
 
 	if apiKeyEnv != "" {
@@ -76,9 +81,14 @@ func createApi(apiKey string) *schedule.Client {
 		fmt.Printf("Empty apiKey...\nPlease use -apiKey or    export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\" \n")
 		os.Exit(1)
 	}
+	return apiKey
+}
+
+func createApi(apiKey string) *schedule.Client {
+	apiKey = checkApiKey(apiKey)
 
 	scheduleClient, err := schedule.NewClient(&client.Config{
-		ApiKey: apiKey,
+		ApiKey:   apiKey,
 		LogLevel: logrus.ErrorLevel,
 	})
 
@@ -164,8 +174,6 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 }
 
 func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
-	time.Sleep(10 * time.Second)
-
 	_, err := scheduleClient.Delete(nil, &schedule.DeleteRequest{
 		IdentifierType:  schedule.Id,
 		IdentifierValue: scheduleID,
@@ -176,6 +184,8 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	} else {
 		fmt.Printf("Schedule %s has been deleted.\n", scheduleID)
 	}
+
+	time.Sleep(10 * time.Second)
 }
 
 func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedule.ListRotationsResult {
@@ -185,36 +195,112 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 	})
 
 	if err != nil {
-		fmt.Printf("Schedule %s can not be get.\n", scheduleID)
+		fmt.Printf("Schedule %s can NOT be get.\n", scheduleID)
 	}
 	return scheduleResult
 }
 
+func createTeamClient(apiKey string) *team.Client {
+	apiKey = checkApiKey(apiKey)
+
+	teamClient, err := team.NewClient(&client.Config{ApiKey: apiKey})
+
+	if err != nil {
+		fmt.Printf("TeamClient can NOT be created.\n")
+	}
+
+	return teamClient
+}
+
+func teamCreator(teamClient team.Client, teamName string, teamDesc string) *team.CreateTeamResult {
+	teamResult, err := teamClient.Create(nil, &team.CreateTeamRequest{
+		Name:        teamName,
+		Description: teamDesc,
+		Members:     []team.Member{},
+	})
+
+	if err != nil {
+		fmt.Printf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
+	} else {
+		fmt.Printf("Team %s with id: %s has been created.\n", teamResult.Name, teamResult.Id)
+	}
+
+	return teamResult
+}
+
+func deleteTeam(teamClient team.Client, teamID string) {
+	_, err := teamClient.Delete(nil, &team.DeleteTeamRequest{
+		IdentifierType:  team.Id,
+		IdentifierValue: teamID,
+	})
+
+	if err != nil {
+		fmt.Printf("Team %s can NOT be deleted.\n", teamID)
+	} else {
+		fmt.Printf("Team %s has been deleted.\n", teamID)
+	}
+
+	time.Sleep(10 * time.Second)
+}
+
 func main() {
+	// Api Key
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script.\n# You can use the     export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\"")
+
+	// Schedule Values
 	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
 	scheduleID := flag.String("scheduleID", staticScheduleID, "# ID of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", staticScheduleTimezone, "# Timezone of the schedule")
 	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
-	delete := flag.Bool("delete", false, "# Delete schedule ")
+
+	// Team Values
+	teamName := flag.String("teamName", staticTeamName, "# Name of team")
+	teamID := flag.String("teamID", staticTeamID, "# ID of team")
+	teamDesc := flag.String("teamDesc", staticTeamDesc, "# Description of team")
+
+	// Bool
+	delete := flag.Bool("delete", false, "# Delete schedule or team")
+
+	// Parsing a flags
 	flag.Parse()
 
+	// Initialization a Clients
 	scheduleClient := createApi(*apiKey)
+	teamClient := createTeamClient(*apiKey)
 
-	if *scheduleName != staticScheduleName {
-		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
-		if *delete {
-			scheduleID = &createdSchedule.Id
-			deleteSchedule(*scheduleClient, *scheduleID)
-			os.Exit(0)
-		}
+	var createdTeam *team.CreateTeamResult
+	var createdSchedule *schedule.CreateResult
+
+	if *teamName != staticTeamName && *teamID == staticTeamID {
+		createdTeam = teamCreator(*teamClient, *teamName, *teamDesc)
+		teamID = &createdTeam.Id
 	}
 
-	if *delete && *scheduleID != staticScheduleID {
-		deleteSchedule(*scheduleClient, *scheduleID)
-		os.Exit(0)
+	if *scheduleName != staticScheduleName && *scheduleID == staticScheduleID {
+		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
+		scheduleID = &createdSchedule.Id
+	}
+
+	if *delete {
+		if *scheduleID != staticScheduleID {
+			deleteSchedule(*scheduleClient, *scheduleID)
+		}
+
+		if *teamID != staticTeamID {
+			deleteTeam(*teamClient, *teamID)
+		}
+
+		if createdTeam != nil && createdSchedule != nil {
+			teamDeleteID := &createdTeam.Id
+			scheduleDeleteID := &createdSchedule.Id
+
+			deleteSchedule(*scheduleClient, *scheduleDeleteID)
+			deleteTeam(*teamClient, *teamDeleteID)
+			os.Exit(0)
+		}
+
 	}
 }

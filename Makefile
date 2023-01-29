@@ -4,11 +4,11 @@ all: compile
 
 version     ?=  @(git describe --tags --abbrev=0)
 org         ?=  y0rune
-target		?=  opsgenie-scheduler-creator
+target      ?=  opsgenie-scheduler-creator
 authorname  ?=  Marcin Woźniak
 authoremail ?=  y0rune@aol.com
 license     ?=  MIT
-year        ?=  2022
+year        ?=  2023
 copyright   ?=  Copyright (c) $(year)
 gofile      ?= main.go
 
