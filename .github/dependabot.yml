@@ -1,0 +1,7 @@
+# Source https://gist.github.com/magnetikonline/6f215db058e327905bce66c37f92426c
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: daily
