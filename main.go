@@ -134,6 +134,33 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	return *scheduleResult
 }
 
+func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Time) {
+	var d time.Time
+
+	c := cal.NewBusinessCalendar()
+	c.AddHoliday(
+		pl.NewYear,
+		pl.ThreeKings,
+		pl.EasterMonday,
+		pl.LabourDay,
+		pl.ConstitutionDay,
+		pl.CorpusChristi,
+		pl.AssumptionBlessedVirginMary,
+		pl.AllSaints,
+		pl.NationalIndependenceDay,
+		pl.ChristmasDayOne,
+		pl.ChristmasDayTwo,
+	)
+
+	for d = start; !d.After(end); d = d.AddDate(0, 0, 1) {
+		_, tmp, _ := c.IsHoliday(d)
+		if tmp {
+			return true, d
+		}
+	}
+	return false, d
+}
+
 func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
