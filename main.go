@@ -168,7 +168,7 @@ func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Time) {
 
 // Source:
 // https://github.com/romana/core/blob/41db054b16d6ca1286eda80e5084d800088485af/common/client/ipam.go#L55
-func deleteElement(arr [5]og.Restriction, i int) []og.Restriction {
+func deleteElement(arr []og.Restriction, i int) []og.Restriction {
 	retval := make([]og.Restriction, i)
 	copy(retval, arr[:i])
 	retval = append(retval, arr[i+1:]...)
