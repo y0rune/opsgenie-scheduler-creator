@@ -139,7 +139,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	return *scheduleResult
 }
 
-func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Weekday) {
+func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Time) {
 	var d time.Time
 
 	c := cal.NewBusinessCalendar()
@@ -160,10 +160,10 @@ func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Weekday) {
 	for d = start; !d.After(end); d = d.AddDate(0, 0, 1) {
 		_, tmp, _ := c.IsHoliday(d)
 		if tmp {
-			return true, d.Weekday()
+			return true, d
 		}
 	}
-	return false, d.Weekday()
+	return false, d
 }
 
 // Source:
