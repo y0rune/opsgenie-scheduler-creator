@@ -194,13 +194,25 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 			if holidayDayBool && (lowerHolidayDay != "saturday" && lowerHolidayDay != "sunday") {
 				for i, item := range defaultSchedule {
 					if item.StartDay == og.Day(lowerHolidayDay) {
-						newDefaultSchedule := deleteElementInt(newDefaultSchedule, i)
+						log.Println("------------------------" + item.StartDay + "-----------------")
 						log.Println(newDefaultSchedule)
 						newDefaultSchedule := deleteElement(newDefaultSchedule, i)
+						log.Println(newDefaultSchedule)
+						log.Println("--------------------------------------------------------------")
+						if i == 0 {
+							log.Println(lowerHolidayDay)
+							newDefaultSchedule[i].StartDay = og.Day(lowerHolidayDay)
+						} else {
+							log.Println(lowerHolidayDay)
+							newDefaultSchedule[i-1].StartDay = og.Day(lowerHolidayDay)
+						}
+						log.Println(newDefaultSchedule)
+						log.Println("--------------------------------------------------------------")
 					}
 				}
 			}
 		}
+
 		_, err := scheduleClient.CreateRotation(nil, &schedule.CreateRotationRequest{
 			Rotation: &og.Rotation{
 				Name:      weekName,
