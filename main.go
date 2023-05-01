@@ -180,37 +180,43 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 	firstMonday := getFirstMonday(year, month)
 	numberOfWeeks := getNumberOfWeeks(year, month)
 	nextMonday := time.Date(year, month, int(firstMonday), 1, 0, 0, 0, time.UTC)
-	newDefaultSchedule := defaultSchedule
 
 	for week := 1; week <= numberOfWeeks; week++ {
 		monday := nextMonday
 		nextMonday = nextMonday.AddDate(0, 0, 7)
 		weekName := fmt.Sprintf("w%d-%d.%d-%d.%d", week, monday.Day(), monday.Month(), nextMonday.Day(), nextMonday.Month())
+		var restrictionList []og.Restriction
 
 		if holidayCheck {
 			holidayDayBool, holidayDay := isHolidayFromTo(monday, nextMonday)
-			lowerHolidayDay := strings.ToLower(holidayDay.String())
+			lowerHolidayDay := strings.ToLower(holidayDay.Weekday().String())
+			nextHolidayDay := strings.ToLower(holidayDay.AddDate(0, 0, 1).Weekday().String())
+			tmpRestrictionList := defaultSchedule[:]
 
 			if holidayDayBool && (lowerHolidayDay != "saturday" && lowerHolidayDay != "sunday") {
 				for i, item := range defaultSchedule {
 					if item.StartDay == og.Day(lowerHolidayDay) {
-						log.Println("------------------------" + item.StartDay + "-----------------")
-						log.Println(newDefaultSchedule)
-						newDefaultSchedule := deleteElement(newDefaultSchedule, i)
-						log.Println(newDefaultSchedule)
-						log.Println("--------------------------------------------------------------")
+						log.Println("------------------------" + weekName + "-------------------------" + lowerHolidayDay + "-----------------")
+
 						if i == 0 {
-							log.Println(lowerHolidayDay)
-							newDefaultSchedule[i].StartDay = og.Day(lowerHolidayDay)
+							tmpRestrictionList = append(tmpRestrictionList, tmpRestrictionList[i+1:]...)
+							tmpRestrictionList[i].StartDay = og.Day(lowerHolidayDay)
+							log.Println(tmpRestrictionList)
 						} else {
-							log.Println(lowerHolidayDay)
-							newDefaultSchedule[i-1].StartDay = og.Day(lowerHolidayDay)
+							log.Println(tmpRestrictionList)
+							tmpRestrictionList = append(tmpRestrictionList, tmpRestrictionList[i+1:]...)
+							tmpRestrictionList[i-1].EndDay = og.Day(nextHolidayDay)
+							log.Println(tmpRestrictionList)
 						}
-						log.Println(newDefaultSchedule)
 						log.Println("--------------------------------------------------------------")
 					}
 				}
+				restrictionList = tmpRestrictionList[:]
+			} else {
+				restrictionList = defaultSchedule[:]
 			}
+		} else {
+			restrictionList = defaultSchedule[:]
 		}
 
 		_, err := scheduleClient.CreateRotation(nil, &schedule.CreateRotationRequest{
@@ -226,18 +232,18 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 				},
 				TimeRestriction: &og.TimeRestriction{
 					Type:            og.WeekdayAndTimeOfDay,
-					RestrictionList: newDefaultSchedule[:],
+					RestrictionList: restrictionList,
 				},
 			},
 			ScheduleIdentifierType:  schedule.Id,
 			ScheduleIdentifierValue: scheduleID,
 		})
-
 		if err != nil {
 			log.Printf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
 		} else {
 			log.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleID)
 		}
+
 	}
 }
 
