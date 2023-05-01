@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -78,7 +79,7 @@ func checkApiKey(apiKey string) string {
 	if apiKeyEnv != "" {
 		apiKey = apiKeyEnv
 	} else if apiKey == "" {
-		fmt.Printf("Empty apiKey...\nPlease use -apiKey or    export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\" \n")
+		log.Printf("Empty apiKey...\nPlease use -apiKey or    export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\" \n")
 		os.Exit(1)
 	}
 	return apiKey
@@ -93,7 +94,7 @@ func createApi(apiKey string) *schedule.Client {
 	})
 
 	if err != nil {
-		fmt.Printf("Error in scheduleClient create: %d", err)
+		log.Printf("Error in scheduleClient create: %d", err)
 		os.Exit(1)
 	}
 
@@ -125,10 +126,10 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	})
 
 	if err != nil {
-		fmt.Printf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
+		log.Printf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
 		os.Exit(1)
 	} else {
-		fmt.Printf("Schedule %s with id: %s has been created.\n", scheduleResult.Name, scheduleResult.Id)
+		log.Printf("Schedule %s with id: %s has been created.\n", scheduleResult.Name, scheduleResult.Id)
 	}
 
 	return *scheduleResult
@@ -193,9 +194,9 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 		})
 
 		if err != nil {
-			fmt.Printf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
+			log.Printf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
 		} else {
-			fmt.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleID)
+			log.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleID)
 		}
 	}
 }
@@ -207,9 +208,9 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	})
 
 	if err != nil {
-		fmt.Printf("Schedule %s has been NOT deleted.\n", scheduleID)
+		log.Printf("Schedule %s has been NOT deleted.\n", scheduleID)
 	} else {
-		fmt.Printf("Schedule %s has been deleted.\n", scheduleID)
+		log.Printf("Schedule %s has been deleted.\n", scheduleID)
 	}
 
 	time.Sleep(10 * time.Second)
@@ -222,7 +223,7 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 	})
 
 	if err != nil {
-		fmt.Printf("Schedule %s can NOT be get.\n", scheduleID)
+		log.Printf("Schedule %s can NOT be get.\n", scheduleID)
 	}
 	return scheduleResult
 }
@@ -233,7 +234,7 @@ func createTeamClient(apiKey string) *team.Client {
 	teamClient, err := team.NewClient(&client.Config{ApiKey: apiKey})
 
 	if err != nil {
-		fmt.Printf("TeamClient can NOT be created.\n")
+		log.Printf("TeamClient can NOT be created.\n")
 	}
 
 	return teamClient
@@ -247,9 +248,9 @@ func teamCreator(teamClient team.Client, teamName string, teamDesc string) *team
 	})
 
 	if err != nil {
-		fmt.Printf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
+		log.Printf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
 	} else {
-		fmt.Printf("Team %s with id: %s has been created.\n", teamResult.Name, teamResult.Id)
+		log.Printf("Team %s with id: %s has been created.\n", teamResult.Name, teamResult.Id)
 	}
 
 	return teamResult
@@ -262,9 +263,9 @@ func deleteTeam(teamClient team.Client, teamID string) {
 	})
 
 	if err != nil {
-		fmt.Printf("Team %s can NOT be deleted.\n", teamID)
+		log.Printf("Team %s can NOT be deleted.\n", teamID)
 	} else {
-		fmt.Printf("Team %s has been deleted.\n", teamID)
+		log.Printf("Team %s has been deleted.\n", teamID)
 	}
 
 	time.Sleep(10 * time.Second)
