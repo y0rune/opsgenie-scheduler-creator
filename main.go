@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/opsgenie/opsgenie-go-sdk-v2/client"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/og"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/schedule"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/team"
+	"github.com/rickar/cal/v2"
+	"github.com/rickar/cal/v2/pl"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,6 +28,7 @@ const staticScheduleTimezone string = "Europe/Warsaw"
 const staticScheduleTeam string = "TestTeam"
 const staticScheduleYear int = 2022
 const staticScheduleEnabledFlag bool = true
+const staticScheduleHolidayFlag bool = false
 
 const staticTeamID string = "XXXXXXXXXXXXXXX"
 const staticTeamName string = "Team Test"
@@ -135,7 +139,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	return *scheduleResult
 }
 
-func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Time) {
+func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Weekday) {
 	var d time.Time
 
 	c := cal.NewBusinessCalendar()
@@ -156,23 +160,38 @@ func isHolidayFromTo(start time.Time, end time.Time) (bool, time.Time) {
 	for d = start; !d.After(end); d = d.AddDate(0, 0, 1) {
 		_, tmp, _ := c.IsHoliday(d)
 		if tmp {
-			return true, d
+			return true, d.Weekday()
 		}
 	}
-	return false, d
+	return false, d.Weekday()
 }
 
-func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int) {
+
+func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int, holidayCheck bool) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
 	numberOfWeeks := getNumberOfWeeks(year, month)
-
 	nextMonday := time.Date(year, month, int(firstMonday), 1, 0, 0, 0, time.UTC)
+	newDefaultSchedule := defaultSchedule
+
 	for week := 1; week <= numberOfWeeks; week++ {
 		monday := nextMonday
 		nextMonday = nextMonday.AddDate(0, 0, 7)
 		weekName := fmt.Sprintf("w%d-%d.%d-%d.%d", week, monday.Day(), monday.Month(), nextMonday.Day(), nextMonday.Month())
 
+		if holidayCheck {
+			holidayDayBool, holidayDay := isHolidayFromTo(monday, nextMonday)
+			lowerHolidayDay := strings.ToLower(holidayDay.String())
+
+			if holidayDayBool && (lowerHolidayDay != "saturday" && lowerHolidayDay != "sunday") {
+				for i, item := range defaultSchedule {
+					if item.StartDay == og.Day(lowerHolidayDay) {
+						newDefaultSchedule := deleteElementInt(newDefaultSchedule, i)
+						log.Println(newDefaultSchedule)
+					}
+				}
+			}
+		}
 		_, err := scheduleClient.CreateRotation(nil, &schedule.CreateRotationRequest{
 			Rotation: &og.Rotation{
 				Name:      weekName,
@@ -186,7 +205,7 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 				},
 				TimeRestriction: &og.TimeRestriction{
 					Type:            og.WeekdayAndTimeOfDay,
-					RestrictionList: defaultSchedule[:],
+					RestrictionList: newDefaultSchedule[:],
 				},
 			},
 			ScheduleIdentifierType:  schedule.Id,
@@ -282,6 +301,7 @@ func main() {
 	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
+	scheduleHolidayFlag := flag.Bool("scheduleHolidayFlag", staticScheduleHolidayFlag, "# Schedule Holiday is enabled - for changing the default schedule inc. holidays")
 
 	// Team Values
 	teamName := flag.String("teamName", staticTeamName, "# Name of team")
@@ -308,7 +328,7 @@ func main() {
 
 	if *scheduleName != staticScheduleName && *scheduleID == staticScheduleID {
 		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear, *scheduleHolidayFlag)
 		scheduleID = &createdSchedule.Id
 	}
 
