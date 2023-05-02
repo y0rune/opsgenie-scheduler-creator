@@ -29,6 +29,7 @@ const staticScheduleTeam string = "TestTeam"
 const staticScheduleYear int = 2022
 const staticScheduleEnabledFlag bool = true
 const staticScheduleHolidayFlag bool = false
+const staticStartEndHour int = 9
 
 const staticTeamID string = "XXXXXXXXXXXXXXX"
 const staticTeamName string = "Team Test"
@@ -175,11 +176,12 @@ func deleteElement(arr []og.Restriction, i int) []og.Restriction {
 	return retval
 }
 
-func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int, holidayCheck bool) {
+func restrictionCreator(scheduleClient schedule.Client, scheduleID string, scheduleStartEndHour int, year int, holidayCheck bool) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
 	numberOfWeeks := getNumberOfWeeks(year, month)
-	nextMonday := time.Date(year, month, int(firstMonday), 1, 0, 0, 0, time.UTC)
+	nextMonday := time.Date(year, month, int(firstMonday), scheduleStartEndHour, 0, 0, 0, time.Local)
+	uint32ScheduleStartEndHour := uint32(scheduleStartEndHour)
 
 	for week := 1; week <= numberOfWeeks; week++ {
 		monday := nextMonday
@@ -201,6 +203,7 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 						if i == 0 {
 							tmpRestrictionList = append(tmpRestrictionList, tmpRestrictionList[i+1:]...)
 							tmpRestrictionList[i].StartDay = og.Day(lowerHolidayDay)
+							tmpRestrictionList[i].StartHour = &uint32ScheduleStartEndHour
 							log.Println(tmpRestrictionList)
 						} else {
 							log.Println(tmpRestrictionList)
@@ -322,6 +325,7 @@ func main() {
 	apiKey := flag.String("apiKey", "", "# ApiKey for use in that script.\n# You can use the     export OPSGENIE_API_KEY=\"XXXXXXXXXXXXXXX\"")
 
 	// Schedule Values
+	scheduleStartEndHour := flag.Int("scheduleStartEndHour", staticStartEndHour, "# Start / End Hour of the schedule")
 	scheduleName := flag.String("scheduleName", staticScheduleName, "# Name of schedule")
 	scheduleID := flag.String("scheduleID", staticScheduleID, "# ID of schedule")
 	scheduleTimezone := flag.String("scheduleTimezone", staticScheduleTimezone, "# Timezone of the schedule")
@@ -355,7 +359,7 @@ func main() {
 
 	if *scheduleName != staticScheduleName && *scheduleID == staticScheduleID {
 		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear, *scheduleHolidayFlag)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleStartEndHour, *scheduleYear, *scheduleHolidayFlag)
 		scheduleID = &createdSchedule.Id
 	}
 
