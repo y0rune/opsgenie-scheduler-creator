@@ -23,9 +23,11 @@ var teamTest *team.CreateTeamResult
 const scheduleName string = "Testing_Schedule"
 const scheduleTimezone string = "Europe/Warsaw"
 const scheduleTeam string = "TestTeam"
-const scheduleYear int = 2022
+const scheduleYear int = 2023
 const scheduleEnabledFlag bool = false
-const expetedNameOfRotation string = "w21-23.5-30.5"
+const scheduleHolidayFlag bool = false
+const expetedNameOfRotation string = "w21-22.5-29.5"
+const scheduleStartEndHour int = 9
 
 const teamName string = "TestTeam"
 const teamDesc string = "Test"
@@ -87,7 +89,7 @@ func TestOneCreateSchedule(t *testing.T) {
 }
 
 func TestOneCreateRestriction(t *testing.T) {
-	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear)
+	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear, scheduleStartEndHour, scheduleHolidayFlag)
 
 	listRotation := getListRotation(*scheduleClient, scheduleTest.Id)
 	if (listRotation.Rotations[20].Name) != expetedNameOfRotation {
@@ -410,4 +412,47 @@ func TestFailedCreateScheduleCommand(t *testing.T) {
 		fmt.Println(cmd)
 		t.Fatalf("Command has been failed.\nCommand: %s", err)
 	}
+}
+
+// Test Nine:
+// - Create a testTeam via function with Holiday
+// - Create a testSchedule via function with Holiday
+// - Create a restriction via function with Holiday
+// - Delete a testschedule via function with Holiday
+// - Delete a testTeam via function with Holiday
+
+func TestNineCreateTestTeam(t *testing.T) {
+	teamTest = teamCreator(*teamClient, teamName, teamDesc)
+	if teamTest.Name != teamName {
+		t.Fatalf("Team has been NOT created correctly.")
+	}
+}
+
+func TestNineCreateSchedule(t *testing.T) {
+	scheduleTest = scheduleCreator(*scheduleClient, scheduleName,
+		scheduleTimezone, scheduleTeam,
+		scheduleEnabledFlag)
+
+	if scheduleTest.Name != scheduleName {
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+}
+
+func TestNineCreateRestriction(t *testing.T) {
+	scheduleHolidayFlagTest := true
+	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleStartEndHour, scheduleYear, scheduleHolidayFlagTest)
+
+	listRotation := getListRotation(*scheduleClient, scheduleTest.Id)
+	if (listRotation.Rotations[20].Name) != expetedNameOfRotation {
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+	fmt.Println(listRotation.Rotations[18])
+}
+
+func TestNineDeleteSchedule(t *testing.T) {
+	deleteSchedule(*scheduleClient, scheduleTest.Id)
+}
+
+func TestNineDeleteTeam(t *testing.T) {
+	deleteTeam(*teamClient, teamTest.Id)
 }
