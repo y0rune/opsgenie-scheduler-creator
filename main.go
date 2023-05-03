@@ -338,7 +338,7 @@ func main() {
 	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
-	scheduleHolidayFlag := flag.Bool("scheduleHolidayFlag", staticScheduleHolidayFlag, "# Schedule Holiday is enabled - for changing the default schedule inc. holidays")
+	scheduleHolidayFlag := flag.Bool("scheduleHolidayFlag", staticScheduleHolidayFlag, "# Schedule Holiday is enabled then it add holidays into schedule")
 
 	// Team Values
 	teamName := flag.String("teamName", staticTeamName, "# Name of team")
