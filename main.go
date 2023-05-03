@@ -99,7 +99,7 @@ func createApi(apiKey string) *schedule.Client {
 	})
 
 	if err != nil {
-		log.Printf("Error in scheduleClient create: %d", err)
+		log.Fatalf("Error in scheduleClient create: %d", err)
 		os.Exit(1)
 	}
 
@@ -131,7 +131,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	})
 
 	if err != nil {
-		log.Printf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
+		log.Fatalf("Schedule %s with id: %s has been NOT created. Error: %d \n", scheduleResult.Name, scheduleResult.Id, err)
 		os.Exit(1)
 	} else {
 		log.Printf("Schedule %s with id: %s has been created.\n", scheduleResult.Name, scheduleResult.Id)
@@ -242,7 +242,8 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, sched
 			ScheduleIdentifierValue: scheduleID,
 		})
 		if err != nil {
-			log.Printf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
+			log.Fatalf("Rotation %s has been NOT created for schedule %s.\n", weekName, scheduleID)
+			os.Exit(1)
 		} else {
 			log.Printf("Rotation %s has been created for schedule %s.\n", weekName, scheduleID)
 		}
@@ -257,7 +258,8 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	})
 
 	if err != nil {
-		log.Printf("Schedule %s has been NOT deleted.\n", scheduleID)
+		log.Fatalf("Schedule %s has been NOT deleted.\n", scheduleID)
+		os.Exit(1)
 	} else {
 		log.Printf("Schedule %s has been deleted.\n", scheduleID)
 	}
@@ -272,7 +274,8 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 	})
 
 	if err != nil {
-		log.Printf("Schedule %s can NOT be get.\n", scheduleID)
+		log.Fatalf("Schedule %s can NOT be get.\n", scheduleID)
+		os.Exit(1)
 	}
 	return scheduleResult
 }
@@ -283,7 +286,8 @@ func createTeamClient(apiKey string) *team.Client {
 	teamClient, err := team.NewClient(&client.Config{ApiKey: apiKey})
 
 	if err != nil {
-		log.Printf("TeamClient can NOT be created.\n")
+		log.Fatalf("TeamClient can NOT be created.\n")
+		os.Exit(1)
 	}
 
 	return teamClient
@@ -297,7 +301,8 @@ func teamCreator(teamClient team.Client, teamName string, teamDesc string) *team
 	})
 
 	if err != nil {
-		log.Printf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
+		log.Fatalf("Team %s with id: %s has NOT been created.\n", teamResult.Name, teamResult.Id)
+		os.Exit(1)
 	} else {
 		log.Printf("Team %s with id: %s has been created.\n", teamResult.Name, teamResult.Id)
 	}
@@ -312,7 +317,8 @@ func deleteTeam(teamClient team.Client, teamID string) {
 	})
 
 	if err != nil {
-		log.Printf("Team %s can NOT be deleted.\n", teamID)
+		log.Fatalf("Team %s can NOT be deleted.\n", teamID)
+		os.Exit(1)
 	} else {
 		log.Printf("Team %s has been deleted.\n", teamID)
 	}
