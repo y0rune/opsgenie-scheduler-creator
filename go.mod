@@ -3,7 +3,7 @@ module opsgenie-scheduler-creator
 go 1.19
 
 require (
-	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.14
+	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.18
 	github.com/sirupsen/logrus v1.9.0
 )
 
