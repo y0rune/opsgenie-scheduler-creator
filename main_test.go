@@ -89,7 +89,7 @@ func TestOneCreateSchedule(t *testing.T) {
 }
 
 func TestOneCreateRestriction(t *testing.T) {
-	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear, scheduleStartEndHour, scheduleHolidayFlag)
+	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleStartEndHour, scheduleYear, scheduleHolidayFlag)
 
 	listRotation := getListRotation(*scheduleClient, scheduleTest.Id)
 	if (listRotation.Rotations[20].Name) != expetedNameOfRotation {
@@ -415,11 +415,11 @@ func TestFailedCreateScheduleCommand(t *testing.T) {
 }
 
 // Test Nine:
-// - Create a testTeam via function with Holiday
-// - Create a testSchedule via function with Holiday
-// - Create a restriction via function with Holiday
-// - Delete a testschedule via function with Holiday
-// - Delete a testTeam via function with Holiday
+// - Create a testTeam via function (holidays)
+// - Create a testSchedule via function (holidays)
+// - Create a restriction via function (holidays)
+// - Delete a testschedule via function (holidays)
+// - Delete a testTeam via function (holidays)
 
 func TestNineCreateTestTeam(t *testing.T) {
 	teamTest = teamCreator(*teamClient, teamName, teamDesc)
@@ -455,4 +455,96 @@ func TestNineDeleteSchedule(t *testing.T) {
 
 func TestNineDeleteTeam(t *testing.T) {
 	deleteTeam(*teamClient, teamTest.Id)
+}
+
+// Test Ten:
+// - Create a testTeam via go run (holidays)
+// - Create a testSchedule via go run (holidays)
+// - Delete a testschedule via go run (holidays)
+// - Delete a testTeam via go run (holidays)
+
+func TestTenCreateTestTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
+	cmd := exec.Command(
+		"go", "run",
+		"main.go",
+		"--apiKey", apiKey,
+		"--teamName", teamName,
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(cmd)
+		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
+	}
+
+	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
+	teamID = r.FindString(string(output))
+}
+
+func TestTenCreateSchedule(t *testing.T) {
+	scheduleHolidayFlagTest := "true"
+	apiKey := checkApiKey(*apiKey)
+
+	cmd := exec.Command(
+		"go", "run",
+		"main.go",
+		"--apiKey", apiKey,
+		"--scheduleTeam", scheduleTeam,
+		"--scheduleName", scheduleName,
+		"--scheduleYear", fmt.Sprint(scheduleYear),
+		"--scheduleHolidayFlag", scheduleHolidayFlagTest,
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(cmd)
+		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
+	}
+
+	r, _ := regexp.Compile("[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+-[a-zA-Z0-9]+")
+	scheduleID = r.FindString(string(output))
+}
+
+func TestTenDeleteSchedule(t *testing.T) {
+	cmd := exec.Command(
+		"go", "run",
+		"main.go",
+		"--apiKey", *apiKey,
+		"--scheduleID", scheduleID,
+		"--delete",
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(cmd)
+		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
+	}
+}
+
+func TestTenDeleteTeam(t *testing.T) {
+	apiKey := checkApiKey(*apiKey)
+
+	cmd := exec.Command(
+		"go", "run",
+		"main.go",
+		"--apiKey", apiKey,
+		"--teamID", teamID,
+		"--delete",
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(cmd)
+		t.Fatalf("Command has been failed.\nCommand: %s", err)
+	} else {
+		fmt.Println(string(output))
+	}
 }
