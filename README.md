@@ -1,7 +1,8 @@
 # Opsgenie-scheduler-creator
 
 The script `Opsgenie-scheduler-creator` is a automatically creator a schedule
-with rotation in OpsGenie. The rotation settings are:
+from Monday at 9:00 to next Monday at 9:00 with rotation in OpsGenie.
+The rotation settings are:
 
 - Workweek (from Monday to Friday): daily - 17:00 - 9:00 (5:00PM - 9:00AM)
 - Weekend (from Friday to Monday): all weekend - 17:00 - 9:00 (5:00PM - 9:00AM)
@@ -58,10 +59,14 @@ make build
         # Delete schedule or team
   -scheduleEnabledFlag
         # Schedule is enabled (default true)
+  -scheduleHolidayFlag
+        # Schedule Holiday is enabled then it add holidays into schedule
   -scheduleID string
         # ID of schedule (default "XXXXXXXXXXXXXXX")
   -scheduleName string
         # Name of schedule (default "Test Schedule")
+  -scheduleStartEndHour int
+        # Start / End Hour of the schedule (default 9)
   -scheduleTeam string
         # Name of the team in the schedule (default "TestTeam")
   -scheduleTimezone string
@@ -104,6 +109,14 @@ Alternative use:
 
 ```bash
 go run main.go --teamName TestName --apiKey XXXXXXXXXXXXXXX --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023
+```
+
+- If you would like to create schedule when the rotation occurs the holiday in
+  Poland (with your team named `TestTeam`)
+
+```bash
+export OPSGENIE_API_KEY="XXXXXXXXXXXXXXX"
+go run main.go --scheduleTeam TestTeam --scheduleName "YEAR_2023" --scheduleYear 2023 --scheduleHolidayFlag true
 ```
 
 ### Output console
