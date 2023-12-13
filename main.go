@@ -107,10 +107,17 @@ func getFirstMonday(year int, month time.Month) int {
 	return firstMonday
 }
 
-func getNumberOfWeeks(year int, month time.Month) int {
-	t := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
-	_, numberOfWeeks := t.ISOWeek()
+func getNumberOfWeeks(year int) int {
+	firstOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
+	weekday := int(firstOfYear.Weekday())
+	daysUntilFirstThursday := (4 - weekday + 7) % 7
+	daysAfterFirstThursday := 365 - daysUntilFirstThursday
 
+	if firstOfYear.Year()%4 == 0 && (firstOfYear.Year()%100 != 0 || firstOfYear.Year()%400 == 0) {
+		daysAfterFirstThursday++
+	}
+
+	numberOfWeeks := (daysAfterFirstThursday / 7) + 1
 	return numberOfWeeks
 }
 
@@ -137,7 +144,7 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
-	numberOfWeeks := getNumberOfWeeks(year, month)
+	numberOfWeeks := getNumberOfWeeks(year)
 
 	nextMonday := time.Date(year, month, int(firstMonday), 1, 0, 0, 0, time.UTC)
 	for week := 1; week <= numberOfWeeks; week++ {
