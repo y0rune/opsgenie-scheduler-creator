@@ -24,6 +24,7 @@ const staticScheduleTimezone string = "Europe/Warsaw"
 const staticScheduleTeam string = "TestTeam"
 const staticScheduleYear int = 2022
 const staticScheduleEnabledFlag bool = true
+const staticRotationStartEndTime int = 9
 
 const staticTeamID string = "XXXXXXXXXXXXXXX"
 const staticTeamName string = "Team Test"
@@ -141,12 +142,13 @@ func scheduleCreator(scheduleClient schedule.Client, scheduleName string, schedu
 	return *scheduleResult
 }
 
-func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int) {
+func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year int, startEndTime int) {
 	month := time.Month(1)
 	firstMonday := getFirstMonday(year, month)
 	numberOfWeeks := getNumberOfWeeks(year)
 
-	nextMonday := time.Date(year, month, int(firstMonday), 1, 0, 0, 0, time.UTC)
+	// Set the next Monday at 9:00 AM
+	nextMonday := time.Date(year, month, int(firstMonday), startEndTime, 0, 0, 0, time.UTC)
 	for week := 1; week <= numberOfWeeks; week++ {
 		monday := nextMonday
 		nextMonday = nextMonday.AddDate(0, 0, 7)
@@ -261,6 +263,7 @@ func main() {
 	scheduleTeam := flag.String("scheduleTeam", staticScheduleTeam, "# Name of the team in the schedule")
 	scheduleYear := flag.Int("scheduleYear", staticScheduleYear, "# Year of the schedule")
 	scheduleEnabledFlag := flag.Bool("scheduleEnabledFlag", staticScheduleEnabledFlag, "# Schedule is enabled")
+	scheduleRotationStartEndTime := flag.Int("scheduleRotationStartEndTime", staticRotationStartEndTime, "# Start Time of the rotation")
 
 	// Team Values
 	teamName := flag.String("teamName", staticTeamName, "# Name of team")
@@ -287,7 +290,7 @@ func main() {
 
 	if *scheduleName != staticScheduleName && *scheduleID == staticScheduleID {
 		createdSchedule := scheduleCreator(*scheduleClient, *scheduleName, *scheduleTimezone, *scheduleTeam, *scheduleEnabledFlag)
-		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear)
+		restrictionCreator(*scheduleClient, createdSchedule.Id, *scheduleYear, *scheduleRotationStartEndTime)
 		scheduleID = &createdSchedule.Id
 	}
 
