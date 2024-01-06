@@ -25,7 +25,10 @@ const scheduleTimezone string = "Europe/Warsaw"
 const scheduleTeam string = "TestTeam"
 const scheduleYear int = 2022
 const scheduleEnabledFlag bool = false
+const scheduleStartEndTimeOfRotation int = 9
 const expetedNameOfRotation string = "w21-23.5-30.5"
+const expectedStartDateOfRotation string = "2022-03-14"
+const expectedStartEndTimeOfRotation string = "09"
 
 const teamName string = "TestTeam"
 const teamDesc string = "Test"
@@ -87,10 +90,27 @@ func TestOneCreateSchedule(t *testing.T) {
 }
 
 func TestOneCreateRestriction(t *testing.T) {
-	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear)
+	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear, scheduleStartEndTimeOfRotation)
 
 	listRotation := getListRotation(*scheduleClient, scheduleTest.Id)
+
+	// w21-23.5-30.5
 	if (listRotation.Rotations[20].Name) != expetedNameOfRotation {
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+
+	// w11-14.3-21.3
+	if (listRotation.Rotations[10].StartDate).Format("2006-01-02") != expectedStartDateOfRotation {
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+
+	// w11-14.3-21.3
+	if (listRotation.Rotations[10].StartDate).Format("15") != expectedStartEndTimeOfRotation {
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+
+	// w49-5.12-12.12
+	if (listRotation.Rotations[49].StartDate).Format("15") != expectedStartEndTimeOfRotation {
 		t.Fatalf("Schedule has been NOT created correctly.")
 	}
 }
