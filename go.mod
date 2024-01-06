@@ -1,6 +1,6 @@
 module opsgenie-scheduler-creator
 
-go 1.19
+go 1.21.5
 
 require (
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.22
