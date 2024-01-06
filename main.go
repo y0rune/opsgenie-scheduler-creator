@@ -197,6 +197,18 @@ func deleteSchedule(scheduleClient schedule.Client, scheduleID string) {
 	time.Sleep(10 * time.Second)
 }
 
+func getSchedule(scheduleClient schedule.Client, scheduleID string) *schedule.GetResult {
+	scheduleResult, err := scheduleClient.Get(nil, &schedule.GetRequest{
+		IdentifierType:  schedule.Id,
+		IdentifierValue: scheduleID,
+	})
+
+	if err != nil {
+		fmt.Printf("Schedule %s can NOT be get.\n", scheduleID)
+	}
+	return scheduleResult
+}
+
 func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedule.ListRotationsResult {
 	scheduleResult, err := scheduleClient.ListRotations(nil, &schedule.ListRotationsRequest{
 		ScheduleIdentifierType:  schedule.Id,
