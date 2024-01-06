@@ -8,9 +8,9 @@ target      ?=  opsgenie-scheduler-creator
 authorname  ?=  Marcin Woźniak
 authoremail ?=  y0rune@aol.com
 license     ?=  MIT
-year        ?=  2023
+year        ?=  $(shell date +%Y)
 copyright   ?=  Copyright (c) $(year)
-gofile      ?= main.go
+gofile      ?=  main.go
 
 compile:
 	@echo "Compiling..."

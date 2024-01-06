@@ -62,6 +62,8 @@ make build
         # ID of schedule (default "XXXXXXXXXXXXXXX")
   -scheduleName string
         # Name of schedule (default "Test Schedule")
+  -scheduleRotationStartEndTime int
+        # Start Time of the rotation (default 9)
   -scheduleTeam string
         # Name of the team in the schedule (default "TestTeam")
   -scheduleTimezone string
