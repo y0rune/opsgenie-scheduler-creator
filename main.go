@@ -102,14 +102,14 @@ func createApi(apiKey string) *schedule.Client {
 }
 
 func getFirstMonday(year int, month time.Month) int {
-	t := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+	t := time.Date(year, month, 1, 0, 0, 0, 0, time.Now().Local().Location())
 	firstMonday := ((8-int(t.Weekday()))%7 + 1)
 
 	return firstMonday
 }
 
 func getNumberOfWeeks(year int) int {
-	firstOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
+	firstOfYear := time.Date(year, time.January, 1, 0, 0, 0, 0, time.Now().Local().Location())
 	weekday := int(firstOfYear.Weekday())
 	daysUntilFirstThursday := (4 - weekday + 7) % 7
 	daysAfterFirstThursday := 365 - daysUntilFirstThursday
@@ -148,7 +148,7 @@ func restrictionCreator(scheduleClient schedule.Client, scheduleID string, year 
 	numberOfWeeks := getNumberOfWeeks(year)
 
 	// Set the next Monday at 9:00 AM
-	nextMonday := time.Date(year, month, int(firstMonday), startEndTime, 0, 0, 0, time.UTC)
+	nextMonday := time.Date(year, month, int(firstMonday), startEndTime, 0, 0, 0, time.Now().Local().Location())
 	for week := 1; week <= numberOfWeeks; week++ {
 		monday := nextMonday
 		nextMonday = nextMonday.AddDate(0, 0, 7)
