@@ -224,7 +224,10 @@ func getListRotation(scheduleClient schedule.Client, scheduleID string) *schedul
 func createTeamClient(apiKey string) *team.Client {
 	apiKey = checkApiKey(apiKey)
 
-	teamClient, err := team.NewClient(&client.Config{ApiKey: apiKey})
+	teamClient, err := team.NewClient(&client.Config{
+		ApiKey:   apiKey,
+		LogLevel: logrus.ErrorLevel,
+	})
 
 	if err != nil {
 		fmt.Printf("TeamClient can NOT be created.\n")
