@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/opsgenie/opsgenie-go-sdk-v2/schedule"
 	"github.com/opsgenie/opsgenie-go-sdk-v2/team"
@@ -26,7 +27,7 @@ const scheduleTeam string = "TestTeam"
 const scheduleYear int = 2022
 const scheduleEnabledFlag bool = false
 const scheduleStartEndTimeOfRotation int = 9
-const expetedNameOfRotation string = "w21-23.5-30.5"
+const expetedNameOfRotation string = "w11-14.3-21.3"
 const expectedStartDateOfRotation string = "2022-03-14"
 const expectedStartEndTimeOfRotation string = "09"
 
@@ -93,24 +94,37 @@ func TestOneCreateRestriction(t *testing.T) {
 	restrictionCreator(*scheduleClient, scheduleTest.Id, scheduleYear, scheduleStartEndTimeOfRotation)
 
 	listRotation := getListRotation(*scheduleClient, scheduleTest.Id)
+	localLocation := time.Now().Local().Location()
 
-	// w21-23.5-30.5
-	if (listRotation.Rotations[20].Name) != expetedNameOfRotation {
-		t.Fatalf("Schedule has been NOT created correctly.")
-	}
+	exampleRotationName := listRotation.Rotations[10].Name
+	exampleRotationStartDate := listRotation.Rotations[10].StartDate.Format("2006-01-02")
+	exampleRotationStartHour := listRotation.Rotations[10].StartDate.In(localLocation).Format("15")
 
-	// w11-14.3-21.3
-	if (listRotation.Rotations[10].StartDate).Format("2006-01-02") != expectedStartDateOfRotation {
-		t.Fatalf("Schedule has been NOT created correctly.")
-	}
+	exampleRotationStartHourSecond := listRotation.Rotations[49].StartDate.In(localLocation).Format("15")
 
 	// w11-14.3-21.3
-	if (listRotation.Rotations[10].StartDate).Format("15") != expectedStartEndTimeOfRotation {
+	if exampleRotationName != expetedNameOfRotation {
+		fmt.Printf("Current Value: %s", exampleRotationName)
+		fmt.Printf("Expected: %s", expetedNameOfRotation)
 		t.Fatalf("Schedule has been NOT created correctly.")
 	}
 
-	// w49-5.12-12.12
-	if (listRotation.Rotations[49].StartDate).Format("15") != expectedStartEndTimeOfRotation {
+	if exampleRotationStartDate != expectedStartDateOfRotation {
+		fmt.Printf("Current Value: %s", exampleRotationStartDate)
+		fmt.Printf("Expected: %s", expectedStartDateOfRotation)
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+
+	if exampleRotationStartHour != expectedStartEndTimeOfRotation {
+		fmt.Printf("Current Value: %s", exampleRotationStartHour)
+		fmt.Printf("Expected: %s", expectedStartEndTimeOfRotation)
+		t.Fatalf("Schedule has been NOT created correctly.")
+	}
+
+	// w49-28.11-5.12
+	if exampleRotationStartHourSecond != expectedStartEndTimeOfRotation {
+		fmt.Printf("Current Value: %s", exampleRotationStartHourSecond)
+		fmt.Printf("Expected: %s", expectedStartEndTimeOfRotation)
 		t.Fatalf("Schedule has been NOT created correctly.")
 	}
 }
